@@ -30,7 +30,7 @@ namespace mangaQuotes.Data.Services
     }
 
     /// <summary>
-    /// This method add a new product to the DbContext and saves it
+    /// This method add a new character to the DbContext and saves it
     /// </summary>
     /// <param name="character"></param>
     /// <returns></returns>

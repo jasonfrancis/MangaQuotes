@@ -37,6 +37,7 @@ namespace mangaQuotes
             });
 
             services.AddScoped<Data.Services.CharacterService>();
+            services.AddScoped<Data.Services.QuoteService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
