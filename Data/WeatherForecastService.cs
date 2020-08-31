@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace mangaQuotes.Data
+namespace MangaQuotes.Data
 {
     public class WeatherForecastService
     {

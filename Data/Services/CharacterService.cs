@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace mangaQuotes.Data.Services
+namespace MangaQuotes.Data.Services
 {
     public class CharacterService
 {

@@ -1,6 +1,6 @@
 using System;
 
-namespace mangaQuotes.Data
+namespace MangaQuotes.Data
 {
     public class WeatherForecast
     {

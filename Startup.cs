@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using mangaQuotes.Data;
+using MangaQuotes.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace mangaQuotes
+namespace MangaQuotes
 {
     public class Startup
     {

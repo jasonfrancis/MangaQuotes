@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace mangaQuotes.Data
+namespace MangaQuotes.Data
 {
     public class Quote
     {

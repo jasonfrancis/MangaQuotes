@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace mangaQuotes.Data
+namespace MangaQuotes.Data
 {
     public class QuoteDbContext : DbContext
     {

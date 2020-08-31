@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace mangaQuotes.Migrations
+namespace MangaQuotes.Migrations
 {
     public partial class initdatabase : Migration
     {

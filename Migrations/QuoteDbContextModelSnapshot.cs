@@ -3,9 +3,9 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using mangaQuotes.Data;
+using MangaQuotes.Data;
 
-namespace mangaQuotes.Migrations
+namespace MangaQuotes.Migrations
 {
     [DbContext(typeof(QuoteDbContext))]
     partial class QuoteDbContextModelSnapshot : ModelSnapshot
@@ -16,7 +16,7 @@ namespace mangaQuotes.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.7");
 
-            modelBuilder.Entity("mangaQuotes.Data.Character", b =>
+            modelBuilder.Entity("MangaQuotes.Data.Character", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,7 +31,7 @@ namespace mangaQuotes.Migrations
                     b.ToTable("Characters");
                 });
 
-            modelBuilder.Entity("mangaQuotes.Data.Quote", b =>
+            modelBuilder.Entity("MangaQuotes.Data.Quote", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,15 +63,15 @@ namespace mangaQuotes.Migrations
                     b.ToTable("Quotes");
                 });
 
-            modelBuilder.Entity("mangaQuotes.Data.Quote", b =>
+            modelBuilder.Entity("MangaQuotes.Data.Quote", b =>
                 {
-                    b.HasOne("mangaQuotes.Data.Character", "Character")
+                    b.HasOne("MangaQuotes.Data.Character", "Character")
                         .WithMany()
                         .HasForeignKey("CharacterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("mangaQuotes.Data.Quote", "ParentQuote")
+                    b.HasOne("MangaQuotes.Data.Quote", "ParentQuote")
                         .WithMany()
                         .HasForeignKey("ParentQuoteId");
                 });
