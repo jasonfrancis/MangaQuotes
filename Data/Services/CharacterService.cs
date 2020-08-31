@@ -24,7 +24,7 @@ namespace mangaQuotes.Data.Services
     /// This method returns the list of characters
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Character>> GetProductAsync()
+    public async Task<List<Character>> GetCharactersAsync()
     {
         return await dbContext.Characters.ToListAsync();
     }
@@ -34,7 +34,7 @@ namespace mangaQuotes.Data.Services
     /// </summary>
     /// <param name="character"></param>
     /// <returns></returns>
-    public async Task<Character> AddProductAsync(Character character)
+    public async Task<Character> AddCharacterAsync(Character character)
     {
         try
         {
@@ -53,7 +53,7 @@ namespace mangaQuotes.Data.Services
     /// </summary>
     /// <param name="character"></param>
     /// <returns></returns>
-    public async Task<Character> UpdateProductAsync(Character character)
+    public async Task<Character> UpdateCharacterAsync(Character character)
     {
         try
         {
@@ -76,7 +76,7 @@ namespace mangaQuotes.Data.Services
     /// </summary>
     /// <param name="character"></param>
     /// <returns></returns>
-    public async Task DeleteProductAsync(Character character)
+    public async Task DeleteCharacterAsync(Character character)
     {
         try
         {

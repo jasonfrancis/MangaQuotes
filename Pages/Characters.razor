@@ -1,0 +1,105 @@
+@page "/Characters"
+@inject Data.Services.CharacterService service
+
+<div class="container">
+    <div class="row bg-light">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (CharactersList.Any())
+                {
+                    @foreach (var character in CharactersList)
+                    {
+                        <tr @onclick="(() => SetCharacterForUpdate(character))">
+                            <td>@character.Id</td>
+                            <td>@character.Name</td>
+                            <td><button class="btn btn-danger" @onclick="(() => DeleteCharacter(character))">Delete</button></td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6"><strong>No characters available</strong></td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row m-5">
+        <div class="col-5 bg-light m-2 justify-content-start">
+
+            <div class="p-3 mb-3 bg-primary text-white text-center">Add New Character</div>
+
+            <EditForm Model="@NewCharacter">
+                <div class="form-group">
+                    <label for="name">Character Name</label>
+                    <input type="text" id="name" class="form-control" @bind-value="@NewCharacter.Name" />
+                </div>
+
+                <div class="text-center p-3 mb-3">
+                    <button class="btn btn-info" @onclick="AddNewCharacter"> Add Character</button>
+                </div>
+            </EditForm>
+        </div>
+
+        <div class="col-5 bg-light m-2 justify-content-end">
+            <div class="p-3 mb-1 bg-primary text-white text-center">Update Character</div>
+
+            <EditForm Model="@UpdateCharacter">
+                <div class="form-group">
+                    <label for="name">Character Name</label>
+                    <input type="text" id="name" class="form-control" @bind-value="@UpdateCharacter.Name" />
+                </div>
+
+                <div class="text-center p-3 mb-3">
+                    <button class="btn btn-info" @onclick="UpdateCharacterData"> Update Character</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    List<Character> CharactersList = new List<Character>();
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshCharacters();
+    }
+
+    private async Task RefreshCharacters()
+    {
+        CharactersList = await service.GetCharactersAsync();
+    }
+
+    public Character NewCharacter { get; set; } = new Character();
+    private async Task AddNewCharacter()
+    {
+        await service.AddCharacterAsync(NewCharacter);
+        NewCharacter = new Character();
+        await RefreshCharacters();
+    }
+
+    Character UpdateCharacter = new Character();
+    private void SetCharacterForUpdate(Character character)
+    {
+        UpdateCharacter = character;
+    }
+
+    private async Task UpdateCharacterData()
+    {
+        await service.UpdateCharacterAsync(UpdateCharacter);
+        await RefreshCharacters();
+    }
+
+    private async Task DeleteCharacter(Character character)
+    {
+        await service.DeleteCharacterAsync(character);
+        await RefreshCharacters();
+    } 
+}
