@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using mangaQuotes.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace mangaQuotes
 {
@@ -29,6 +30,13 @@ namespace mangaQuotes
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+
+            services.AddDbContext<QuoteDbContext>(options =>
+            {
+                options.UseSqlite("Data Source = Quotes.db");
+            });
+
+            services.AddScoped<Data.Services.CharacterService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
