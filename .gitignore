@@ -9,3 +9,5 @@
 .history/
 
 obj/
+bin/
+Quotes.db
