@@ -58,8 +58,7 @@ else
             <h2>Add New Quote</h2>
             <EditForm Model="@NewQuote">
                 <div>
-                    <label for="parent">Preceded By</label>
-                    <input type="text" id="parent" class="form-control" @bind-value="@NewQuote.ParentQuote.Id" />
+                    <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" Options=@QuotesList Label="Preceded By" DisplayLambda=@(q => $"Ch. {q.Chapter} Pg. {q.Page} {q.Character.Name} \"{q.Text}\"")/>
                 </div>
 
                 <div>
@@ -126,13 +125,13 @@ else
 @code {
 
     List<Quote> QuotesList = new List<Quote>();
-    Character[] Characters;
+    List<Character> Characters = new List<Character>();
     protected override async Task OnInitializedAsync()
     {
         Characters = (await characterService.GetCharactersAsync())
             .OrderBy(c => c.Name)
-            .ToArray();
-        System.Console.WriteLine(string.Join(", ", Characters.Select(c => c.Id).ToList()));
+            .ToList();
+        
         await RefreshQuotes();
     }
 

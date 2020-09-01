@@ -20,7 +20,7 @@ namespace MangaQuotes.Shared
 
         ///<summary> The options in this select.</summary>
         [Parameter]
-        public Entity[] Options { get; set; }
+        public List<T> Options { get; set; }
 
         ///<summary> The text used in th HTML Label tag.</summary>
         [Parameter]
@@ -71,10 +71,11 @@ namespace MangaQuotes.Shared
                 foreach (var option in Options)
                 {
                     var optionAsT = (T)Convert.ChangeType(option, typeof(T));
+                    var optionId = getOptionId(optionAsT);
 
                     builder.OpenElement(i++, "option");
-                    builder.AddAttribute(i++, "value", option.Id);
-                    if(option.Id == curValueId){
+                    builder.AddAttribute(i++, "value", optionId);
+                    if(optionId == curValueId){
                         builder.AddAttribute(i++, "selected", true);
                     }
                     builder.AddContent(i++, DisplayLambda(optionAsT));
@@ -110,7 +111,10 @@ namespace MangaQuotes.Shared
         {
             int selectedOptionId = 0;
             int.TryParse(id, out selectedOptionId);
-            var newValue = Options.SingleOrDefault(o => o.Id == selectedOptionId);
+            var newValue = Options.SingleOrDefault(o => {
+                var x = getOptionId(o);
+                return x == selectedOptionId;
+            });
             var valueAsType = (T)Convert.ChangeType(newValue, typeof(T));
             ValueChanged.InvokeAsync(valueAsType).Wait();
             EditContext.NotifyFieldChanged(FieldIdentifier);
@@ -120,6 +124,10 @@ namespace MangaQuotes.Shared
             return _ValidationMessages.Count == 0;
         }
 
+        private int getOptionId (T option)
+        {
+            return (int)option.GetType().GetProperty("Id").GetValue(option);
+        }
         //Add event handler for when validation state changes.
         protected override void OnInitialized()
         {
