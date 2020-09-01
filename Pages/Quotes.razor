@@ -2,6 +2,7 @@
 @inject MangaQuotes.Data.Services.QuoteService service
 @inject MangaQuotes.Data.Services.CharacterService characterService
 @inject IJSRuntime JsRuntime
+@using MangaQuotes.Shared
 
 <h1 class="rvt-ts-xxl">Quotes</h1>
 
@@ -62,8 +63,7 @@ else
                 </div>
 
                 <div>
-                    <label for="character">Character ID</label>
-                    <input type="text" id="name" class="form-control" @bind-value="@NewQuote.Character.Id" />
+                    <RivetInputSelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/>
                 </div>
 
                 <div>
@@ -126,10 +126,12 @@ else
 @code {
 
     List<Quote> QuotesList = new List<Quote>();
-    List<Character> Characters = new List<Character>();
+    Character[] Characters;
     protected override async Task OnInitializedAsync()
     {
-        Characters = await characterService.GetCharactersAsync();
+        Characters = (await characterService.GetCharactersAsync())
+            .OrderBy(c => c.Name)
+            .ToArray();
         System.Console.WriteLine(string.Join(", ", Characters.Select(c => c.Id).ToList()));
         await RefreshQuotes();
     }
