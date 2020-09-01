@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MangaQuotes.Data
 {
-    public class Quote
+    public class Quote : Entity
     {
-        public int Id { get; set; }
-
         public Quote ParentQuote { get; set; }
 
         [Required]
