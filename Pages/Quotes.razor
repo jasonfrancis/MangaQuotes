@@ -1,76 +1,124 @@
 @page "/Quotes"
 @inject MangaQuotes.Data.Services.QuoteService service
 @inject MangaQuotes.Data.Services.CharacterService characterService
+@inject IJSRuntime JsRuntime
+
 <h1 class="rvt-ts-xxl">Quotes</h1>
-<div class="container">
-    <div class="row bg-light">
-        <table class="table table-bordered">
-            <thead class="thead-dark">
+
+@if (QuotesList.Any())
+{
+    <table class="rvt-table-stripes rvt-m-tb-md">
+        <caption class="sr-only">List of Characters</caption>
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Preceded By</th>
+                <th scope="col">Character</th>
+                <th scope="col">Location</th>
+                <th scope="col">Text</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var quote in QuotesList)
+            {
                 <tr>
-                    <th>Id</th>
-                    <th>Preceded By</th>
-                    <th>Character</th>
-                    <th>Location</th>
-                    <th>Text</th>
+                    <td>@quote.Id</td>
+                    <td>@quote.ParentQuote?.Id</td>
+                    <td>@quote.Character?.Name</td>
+                    <td>Ch. @quote.Chapter Pg. @quote.Page</td>
+                    <td>@quote.Text</td>
+                    <td>
+                        @* <button class="rvt-button rvt-button--primary" @onclick="(() => SetQuoteForUpdate(quote))">Edit</button> *@
+                        <button class="rvt-button rvt-button--danger" @onclick="(() => DeleteQuote(quote))">Delete</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @if (QuotesList.Any())
-                {
-                    @foreach (var quote in QuotesList)
-                    {
-                        <tr>
-                            <td>@quote.Id</td>
-                            <td>@quote.ParentQuote?.Id</td>
-                            <td>@quote.Character?.Name</td>
-                            <td>Ch. @quote.Chapter Pg. @quote.Page</td>
-                            <td>@quote.Text</td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="6"><strong>No quotes available</strong></td></tr>
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="rvt-inline-alert rvt-inline-alert--standalone rvt-inline-alert--info rvt-m-all-md">
+        <span class="rvt-inline-alert__icon">
+            <svg role="img" xmlns="http://www.w3.org/2000/svg" class="rvt-icon">
+                <use xlink:href="/images/rvt-icons.svg#rvt-icon-info-circle"></use>
+            </svg>
+        </span>
+        <span class="rvt-inline-alert__message" id="radio-list-message">
+            No quotes found.
+        </span>
     </div>
+}
 
-    <div class="row m-5">
-        <div class="col-5 bg-light m-2 justify-content-start">
-
-            <div class="p-3 mb-3 bg-primary text-white text-center">Add New Quote</div>
-
+<div class="rvt-container rvt-container--junior rvt-container--center">
+    <div class="rvt-grid">
+        <div class="rvt-grid__item-6-md-up">
+            <h2>Add New Quote</h2>
             <EditForm Model="@NewQuote">
-                <div class="form-group">
+                <div>
                     <label for="parent">Preceded By</label>
                     <input type="text" id="parent" class="form-control" @bind-value="@NewQuote.ParentQuote.Id" />
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label for="character">Character ID</label>
                     <input type="text" id="name" class="form-control" @bind-value="@NewQuote.Character.Id" />
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label for="chapter">Chapter</label>
                     <input type="text" id="chapter" class="form-control" @bind-value="@NewQuote.Chapter" />
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label for="page">Page</label>
                     <input type="text" id="page" class="form-control" @bind-value="@NewQuote.Page" />
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label for="quoteText">Quote Text</label>
                     <InputTextArea id="quoteText" class="form-control" @bind-Value="@NewQuote.Text" />
                 </div>
 
-                <div class="text-center p-3 mb-3">
+                <div>
                     <button class="btn btn-info" @onclick="AddNewQuote"> Add Quote</button>
                 </div>
             </EditForm>
+        </div>
+        <div class="rvt-grid__item-6-md-up">
+            <h2>Edit Quote</h2>
+            <p>Not implemented.</p>
+            @* <EditForm Model="@UpdateQuote">
+                <div>
+                    <label for="parent">Preceded By</label>
+                    <input type="text" id="parent" class="form-control" @bind-value="@UpdateQuote.ParentQuote.Id" />
+                </div>
+
+                <div>
+                    <label for="character">Character ID</label>
+                    <input type="text" id="name" class="form-control" @bind-value="@UpdateQuote.Character.Id" />
+                </div>
+
+                <div>
+                    <label for="chapter">Chapter</label>
+                    <input type="text" id="chapter" class="form-control" @bind-value="@UpdateQuote.Chapter" />
+                </div>
+
+                <div>
+                    <label for="page">Page</label>
+                    <input type="text" id="page" class="form-control" @bind-value="@UpdateQuote.Page" />
+                </div>
+
+                <div>
+                    <label for="quoteText">Quote Text</label>
+                    <InputTextArea id="quoteText" class="form-control" @bind-Value="@UpdateQuote.Text" />
+                </div>
+
+                <div>
+                    <button class="btn btn-info" @onclick="UpdateQuoteData"> Update Quote</button>
+                </div>
+            </EditForm> *@
         </div>
     </div>
 </div>
@@ -78,8 +126,11 @@
 @code {
 
     List<Quote> QuotesList = new List<Quote>();
+    List<Character> Characters = new List<Character>();
     protected override async Task OnInitializedAsync()
     {
+        Characters = await characterService.GetCharactersAsync();
+        System.Console.WriteLine(string.Join(", ", Characters.Select(c => c.Id).ToList()));
         await RefreshQuotes();
     }
 
@@ -96,9 +147,10 @@
         await RefreshQuotes();
     }
 
-    Quote UpdateQuote = new Quote();
+    Quote UpdateQuote = new Quote() { ParentQuote = new Quote(), Character = new Character() };
     private void SetQuoteForUpdate(Quote quote)
     {
+        quote.ParentQuote = quote.ParentQuote ?? new Quote();
         UpdateQuote = quote;
     }
 
@@ -110,7 +162,11 @@
 
     private async Task DeleteQuote(Quote quote)
     {
-        await service.DeleteQuoteAsync(quote);
-        await RefreshQuotes();
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete Quote {quote.Id}?");
+        if(confirmed)
+        {
+            await service.DeleteQuoteAsync(quote);
+            await RefreshQuotes();
+        }
     } 
 }
