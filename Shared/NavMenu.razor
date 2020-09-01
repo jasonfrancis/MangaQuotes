@@ -1,14 +1,23 @@
-﻿<div class="rvt-header__controls">
+﻿@inject NavigationManager Navigation
+@implements IDisposable
+
+<div class="rvt-header__controls">
     <!-- Main inline nav element -->
     <nav class="rvt-header__main-nav" role="navigation">
         <ul>
-            <li>
-                <a href="/Characters">Characters</a>
-            </li>
-            <li>
-                @* <a href="/Quotes" aria-current="page">Quotes</a> *@
-                <a href="/Quotes">Quotes</a>
-            </li>
+            @foreach(var link in Links)
+            {
+                <li>
+                    @if(link.IsCurrentPage(_CurrentPage))
+                    {
+                        <a href="@link.Url" aria-current="page">@link.Text</a>
+                    }
+                    else
+                    {
+                        <a href="@link.Url">@link.Text</a>
+                    }
+                </li>
+            }
         </ul>
     </nav>
     <!-- Drawer close button - shows on small screens -->
@@ -37,14 +46,66 @@
     <!-- Drawer nav -->
     <nav class="rvt-drawer__nav" role="navigation">
         <ul>
-            <li>
-                <a href="/Characters">Characters</a>
-            </li>
-            <li>
-                @* <a href="/Quotes" aria-current="page">Quotes</a> *@
-                <a href="/Quotes">Quotes</a>
-            </li>
+            @foreach(var link in Links)
+            {
+                <li>
+                    @if(link.IsCurrentPage(_CurrentPage))
+                    {
+                        <a href="@link.Url" aria-current="page">@link.Text</a>
+                    }
+                    else
+                    {
+                        <a href="@link.Url">@link.Text</a>
+                    }
+                </li>
+            }
         </ul>
         <button type="button" class="rvt-drawer__bottom-close">Close nav</button>
     </nav>
 </div>
+
+@code {
+    private class Link
+    {
+        public string Url {get; set;}
+        public string Text {get; set;}
+
+        public Link(string url, string text)
+        {
+            Url = url;
+            Text = text;
+        }
+
+        public bool IsCurrentPage(string currentUrl)
+        {
+            var uri = new Uri(currentUrl);
+            return uri.AbsolutePath.ToLower() == Url.ToLower();
+        }
+    }
+    
+    List<Link> Links = new List<Link> { new Link("/Characters", "Characters"), new Link("/Quotes", "Quotes") };
+    
+    private string _CurrentPage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += HandleLocationChanged;
+        _CurrentPage = Navigation.Uri;
+        base.OnInitialized();
+    }
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        _CurrentPage = e.Location;
+        var x = new Uri(Navigation.Uri);
+        var z = System.Text.Json.JsonSerializer.Serialize(x);
+        Console.WriteLine("Test.");
+        Console.WriteLine(z);
+        StateHasChanged(); //Let the component know it needs to redraw things.  
+    }
+    public void Dispose()
+    {
+        // Unsubscribe from the event when our component is disposed
+        Navigation.LocationChanged -= HandleLocationChanged;
+    }
+
+}
