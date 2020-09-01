@@ -1,5 +1,6 @@
 ﻿@page "/"
 @namespace MangaQuotes.Pages
+@using MangaQuotes.Shared
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
@@ -17,36 +18,10 @@
     <title>Manga Quotes</title>
 </head>
 <body>
-    <header class="rvt-header" role="banner">
-        <a class="rvt-skip-link" href="#main-content">Skip to content</a>
-        <div class="rvt-header__trident">
-            <svg role="img" xmlns="http://www.w3.org/2000/svg" width="60" height="70" viewBox="0 0 60 70" aria-labelledby="logo">
-                <title id="logo">Manga Quotes</title>
-                <use xlink:href="/images/rvt-icons.svg#rvt-icon-chat"></use>
-            </svg>
-        </div>
-        <span class="rvt-header__title">
-            <a href="/">Manga Quotes</a>
-        </span>
-    </header>
-    <main role="main" id="main-content">
-        <div class="rvt-p-top-sm">
-            <app>
-                <component type="typeof(App)" render-mode="ServerPrerendered" />
-            </app>
+    <app>
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
+    </app>
 
-            <div id="blazor-error-ui">
-                <environment include="Staging,Production">
-                    An error has occurred. This application may no longer respond until reloaded.
-                </environment>
-                <environment include="Development">
-                    An unhandled exception has occurred. See browser dev tools for details.
-                </environment>
-                <a href="" class="reload">Reload</a>
-                <a class="dismiss">🗙</a>
-            </div>
-        </div>
-    </main>
     <footer class="rvt-footer m-top-xxl" role="contentinfo">
         <div class="rvt-footer__copyright-lockup">
             <p>Manga Quotes can be found on <a href="https://github.com/jasonfrancis/MangaQuotes">Github</a> and is freely available under the <a href="https://mit-license.org/">MIT License</a>.</p>
@@ -62,3 +37,4 @@
     <script src="_framework/blazor.server.js"></script>
 </body>
 </html>
+            

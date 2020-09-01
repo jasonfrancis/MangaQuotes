@@ -1,37 +1,14 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">MangaQuotes</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+﻿<div class="rvt-header__controls">
+    <!-- Main inline nav element -->
+    <nav class="rvt-header__main-nav" role="navigation">
+        <ul>
+            <li>
+                <a href="/Characters">Characters</a>
+            </li>
+            <li>
+                @* <a href="/Quotes" aria-current="page">Quotes</a> *@
+                <a href="/Quotes">Quotes</a>
+            </li>
+        </ul>
+    </nav>
 </div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Characters">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Characters
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="/Quotes">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Quotes
-            </NavLink>
-        </li>
-    </ul>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
