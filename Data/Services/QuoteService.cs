@@ -27,7 +27,9 @@ namespace MangaQuotes.Data.Services
         /// <returns></returns>
         public async Task<List<Quote>> GetQuotesAsync()
         {
-            return await GetAllAndRelated().ToListAsync();
+            return await GetAllAndRelated()
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         private async Task<Quote> SetRelatedProperties (Quote quote)
@@ -75,7 +77,12 @@ namespace MangaQuotes.Data.Services
                 var quoteExist = GetAllAndRelated().FirstOrDefault(p => p.Id == quote.Id);
                 if (quoteExist != null)
                 {
-                    dbContext.Update(quote);
+                    quoteExist.ParentQuote = quote.ParentQuote;
+                    quoteExist.Character = quote.Character;
+                    quoteExist.Chapter = quote.Chapter;
+                    quoteExist.Page = quote.Page;
+                    quoteExist.Text = quote.Text;
+                    dbContext.Update(quoteExist);
                     await dbContext.SaveChangesAsync();
                 }
             }

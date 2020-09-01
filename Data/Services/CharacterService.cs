@@ -26,7 +26,9 @@ namespace MangaQuotes.Data.Services
     /// <returns></returns>
     public async Task<List<Character>> GetCharactersAsync()
     {
-        return await dbContext.Characters.ToListAsync();
+        return await dbContext.Characters
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     /// <summary>

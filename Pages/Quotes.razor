@@ -30,7 +30,7 @@
                     <td>Ch. @quote.Chapter Pg. @quote.Page</td>
                     <td>@quote.Text</td>
                     <td>
-                        @* <button class="rvt-button rvt-button--primary" @onclick="(() => SetQuoteForUpdate(quote))">Edit</button> *@
+                        <button class="rvt-button rvt-button--primary" @onclick="(() => SetQuoteForUpdate(quote))">Edit</button>
                         <button class="rvt-button rvt-button--danger" @onclick="(() => DeleteQuote(quote))">Delete</button>
                     </td>
                 </tr>
@@ -87,16 +87,13 @@ else
         </div>
         <div class="rvt-grid__item-6-md-up">
             <h2>Edit Quote</h2>
-            <p>Not implemented.</p>
-            @* <EditForm Model="@UpdateQuote">
+            <EditForm Model="@UpdateQuote">
                 <div>
-                    <label for="parent">Preceded By</label>
-                    <input type="text" id="parent" class="form-control" @bind-value="@UpdateQuote.ParentQuote.Id" />
+                    <RivetInputSelectEntity @bind-Value="UpdateQuote.ParentQuote" Options=@ValidQuoteOptions(UpdateQuote) Label="Preceded By" DisplayLambda=@QuoteOptionText/>
                 </div>
 
                 <div>
-                    <label for="character">Character ID</label>
-                    <input type="text" id="name" class="form-control" @bind-value="@UpdateQuote.Character.Id" />
+                    <RivetInputSelectEntity @bind-Value="UpdateQuote.Character" Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/>
                 </div>
 
                 <div>
@@ -117,7 +114,7 @@ else
                 <div>
                     <button class="btn btn-info" @onclick="UpdateQuoteData"> Update Quote</button>
                 </div>
-            </EditForm> *@
+            </EditForm>
         </div>
     </div>
 </div>
@@ -148,11 +145,15 @@ else
         await RefreshQuotes();
     }
 
-    Quote UpdateQuote = new Quote() { ParentQuote = new Quote(), Character = new Character() };
+    Quote UpdateQuote = new Quote();
     private void SetQuoteForUpdate(Quote quote)
     {
-        quote.ParentQuote = quote.ParentQuote ?? new Quote();
-        UpdateQuote = quote;
+        UpdateQuote.Id = quote.Id;
+        UpdateQuote.ParentQuote = quote.ParentQuote;
+        UpdateQuote.Character = quote.Character;
+        UpdateQuote.Chapter = quote.Chapter;
+        UpdateQuote.Page = quote.Page;
+        UpdateQuote.Text = quote.Text;
     }
 
     private async Task UpdateQuoteData()
@@ -176,6 +177,30 @@ else
         var truncatedQuote = q.Text.Length > 100 ? $"{q.Text.Substring(0, 100)}..." : q.Text;
         return $"Ch. {q.Chapter} Pg. {q.Page} {q.Character.Name} {truncatedQuote}";
     }
+
+    //Let's avoid any grandfather paradoxes when picking a ParentQuote.
+    private List<int> QuoteIdsToExclude(int quoteId)
+    {
+        var badIds = new List<int>{ quoteId };
+
+        var childrenIds = QuotesList
+            .Where(q => q.ParentQuote?.Id == quoteId)
+            .Select(q => q.Id)
+            .ToList();
+        
+        childrenIds.ForEach(i => badIds.AddRange(QuoteIdsToExclude(i)));
+
+        return badIds;
+    }
+    private List<Quote> ValidQuoteOptions(Quote quote)
+    {
+        var invalidIds = QuoteIdsToExclude(quote.Id);
+
+        return QuotesList
+            .Where(q => invalidIds.Contains(q.Id) == false)
+            .ToList();
+    }
+
 
     private void ParentQuoteChanged(ChangeEventArgs evt)
     {
