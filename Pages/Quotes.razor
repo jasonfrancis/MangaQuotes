@@ -58,7 +58,7 @@ else
             <h2>Add New Quote</h2>
             <EditForm Model="@NewQuote">
                 <div>
-                    <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" Options=@QuotesList Label="Preceded By" DisplayLambda=@(q => $"Ch. {q.Chapter} Pg. {q.Page} {q.Character.Name} \"{q.Text}\"")/>
+                    <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By" DisplayLambda=@QuoteOptionText/>
                 </div>
 
                 <div>
@@ -169,5 +169,23 @@ else
             await service.DeleteQuoteAsync(quote);
             await RefreshQuotes();
         }
-    } 
+    }
+
+    private string QuoteOptionText(Quote q)
+    {
+        var truncatedQuote = q.Text.Length > 100 ? $"{q.Text.Substring(0, 100)}..." : q.Text;
+        return $"Ch. {q.Chapter} Pg. {q.Page} {q.Character.Name} {truncatedQuote}";
+    }
+
+    private void ParentQuoteChanged(ChangeEventArgs evt)
+    {
+        int id = 0;
+        Int32.TryParse(evt.Value.ToString(), out id);
+        var parentQuote = QuotesList.SingleOrDefault(q => q.Id == id);
+        if(parentQuote != null)
+        {
+            NewQuote.Chapter = parentQuote.Chapter;
+            NewQuote.Page = parentQuote.Page;
+        }
+    }
 }
