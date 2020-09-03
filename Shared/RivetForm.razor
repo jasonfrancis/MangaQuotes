@@ -1,0 +1,84 @@
+@typeparam TItem
+@implements IDisposable
+
+<EditForm EditContext="@editContext" OnValidSubmit="DoSubmit">
+    <div class="rvt-p-bottom-md">
+        <fieldset disabled="@FormIsSubmitting">
+            @ChildContent
+        </fieldset>
+    </div>
+    @if(!FormIsValid)
+    {
+        <div class="rvt-p-bottom-md">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </div>
+    }
+    <div class="rvt-p-bottom-md">
+        <button type="submit" class="rvt-button" disabled="@(FormIsValid == false || FormIsSubmitting)">
+            @if(FormIsSubmitting)
+            {
+                <div class="rvt-loader rvt-display-inline-block" aria-label="Submitting"></div>
+                <span class="rvt-m-left-xs">@SubmitButtonText</span>
+            }
+            else
+            {
+                @SubmitButtonText
+            }
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    ///<summary> The object that holds the form data.</summary>
+    [Parameter]
+    public TItem Item {get;set;}
+    ///<summary> The form input and label elements. These should be specific to the type of Item.</summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    ///<summary> The text that should appear on the submit button. This should start with a verb, e.g. "Update widget".</summary>
+    [Parameter]
+    public string SubmitButtonText {get;set;}
+
+    ///<summary> An async method that will be invoked when the user submits the form.</summary>
+    [Parameter]
+    public Func<Task> OnSubmit {get;set;}
+
+    private EditContext editContext;
+    private bool FormIsValid = false;
+    private bool FormIsSubmitting = false;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(Item);
+        SubmitButtonText = string.IsNullOrWhiteSpace(SubmitButtonText) ? "Submit" : SubmitButtonText;
+        editContext.OnFieldChanged += HandleFieldChanged;
+    }
+    
+    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    {
+        FormIsValid = editContext.Validate();
+        StateHasChanged();
+    }
+
+    private async Task DoSubmit()
+    {
+        FormIsSubmitting = true;
+        try {
+            await OnSubmit();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Oh, snap! Something blew up when submitting the form. {ex.Message}");
+        }
+        finally
+        {
+            FormIsSubmitting = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        editContext.OnFieldChanged -= HandleFieldChanged;
+    }
+}

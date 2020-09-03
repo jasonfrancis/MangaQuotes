@@ -56,7 +56,7 @@ else
     <div class="rvt-grid">
         <div class="rvt-grid__item-6-md-up">
             <h2>Add New Quote</h2>
-            <EditForm Model="@NewQuote">
+            <RivetForm Item="@NewQuote" SubmitButtonText="Add Quote" OnSubmit="AddNewQuote">
                 <div>
                     <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By" DisplayLambda=@QuoteOptionText/>
                 </div>
@@ -79,11 +79,7 @@ else
                     <label for="quoteText">Quote Text</label>
                     <InputTextArea id="quoteText" class="form-control" @bind-Value="@NewQuote.Text" />
                 </div>
-
-                <div>
-                    <button class="btn btn-info" @onclick="AddNewQuote"> Add Quote</button>
-                </div>
-            </EditForm>
+            </RivetForm>
         </div>
         <div class="rvt-grid__item-6-md-up">
             <h2>Edit Quote</h2>
@@ -135,6 +131,7 @@ else
     private async Task RefreshQuotes()
     {
         QuotesList = await service.GetQuotesAsync();
+        StateHasChanged();
     }
 
     public Quote NewQuote { get; set; } = new Quote() { ParentQuote = new Quote(), Character = new Character() };
