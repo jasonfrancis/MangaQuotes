@@ -1,0 +1,17 @@
+@typeparam T
+@inherits InputBase<T>
+<label>@Label</label>
+<InputSelect @bind-Value=StringValue @oninput=SelectedOptionChanged>
+    @foreach(var option in FormattedOptions)
+    {
+        @if(option.Selected)
+        {
+            <option value=@option.Id selected>@option.DisplayName</option>
+        }
+        else
+        {
+            <option value=@option.Id>@option.DisplayName</option>
+        }
+    }
+</InputSelect>
+<p>@StringValue vs @(System.Text.Json.JsonSerializer.Serialize(Value))</p>
