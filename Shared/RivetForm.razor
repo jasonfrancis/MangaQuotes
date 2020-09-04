@@ -77,6 +77,15 @@
         }
     }
 
+    public void ResetState()
+    {
+        //Mark the form as unmodified, reset validation.
+        editContext.MarkAsUnmodified();
+        editContext.NotifyValidationStateChanged();
+        FormIsValid = true;
+        FormIsSubmitting = false;
+    }
+
     public void Dispose()
     {
         editContext.OnFieldChanged -= HandleFieldChanged;
