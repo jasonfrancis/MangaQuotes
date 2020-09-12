@@ -63,7 +63,12 @@ else
 
                 <div>
                     <RivetInputSelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/>
-                    <SelectEntity @bind-Value="NewQuote.Character" Label="Test Character" Options=@Characters />
+                    @* <SelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character"/> *@
+                    @foreach(var c in Characters)
+                    {
+                        <button type="button" class="rvt-button" @onclick=@(e => SetNewQuoteCharacter(c))>Set To @c.Name</button>
+                    }
+                    <p>Name: @NewQuote.Character?.Name</p>
                 </div>
 
                 <div>
@@ -212,5 +217,13 @@ else
             NewQuote.Chapter = parentQuote.Chapter;
             NewQuote.Page = parentQuote.Page;
         }
+    }
+
+    private void SetNewQuoteCharacter(Character character)
+    {
+        Console.WriteLine($"SetNewQuoteCharacter() {character?.Name ?? "none"}");
+        NewQuote.Character = character;
+        //Force redraw
+        StateHasChanged();
     }
 }
