@@ -58,18 +58,11 @@ else
             <h2>Add New Quote</h2>
             <RivetForm @ref=addForm Item="@NewQuote" SubmitButtonText="Add Quote" OnSubmit="AddNewQuote">
                 <div>
-                    <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By" DisplayLambda=@QuoteOptionText/>
+                    <TestSelect @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By"/>
                 </div>
 
                 <div>
-                    <TestSelect T=Character @bind-Value=NewQuote.Character Options=@Characters />
-                    @* <RivetInputSelectEntity @bind-Value=NewQuote.Character @oninput=EatShit Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/> *@
-                    @* <SelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character"/> *@
-                    @foreach(var c in Characters)
-                    {
-                        <button type="button" class="rvt-button" @onclick=@(e => SetNewQuoteCharacter(c))>Set To @c.Name</button>
-                    }
-                    <p>Name: @NewQuote.Character?.Name</p>
+                    <TestSelect T=Character @bind-Value=NewQuote.Character Options=@Characters Label="Character" />
                 </div>
 
                 <div>
@@ -142,11 +135,11 @@ else
         StateHasChanged();
     }
 
-    public Quote NewQuote { get; set; } = new Quote() { ParentQuote = new Quote(), Character = new Character() };
+    public Quote NewQuote { get; set; } = new Quote();
     private async Task AddNewQuote()
     {
         await service.AddQuoteAsync(NewQuote);
-        NewQuote = new Quote() { ParentQuote = new Quote(), Character = new Character() };
+        NewQuote = new Quote();
         addForm.ResetState();
         await RefreshQuotes();
     }

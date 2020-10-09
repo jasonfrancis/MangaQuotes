@@ -1,22 +1,52 @@
 @typeparam T;
 @inherits InputBase<T>;
 
-<p>Test: @CurrentValueAsString vs @GetId(Value), @GetDisplayName(Value)</p>
-<InputSelect @bind-Value=StringValue @oninput=SelectedValueChanged @onchange=SelectedValueChanged>
+<label for=@_Id class="rvt-m-top-md">@Label</label>
+<InputSelect 
+    @bind-Value=StringValue
+    @oninput=SelectedValueChanged
+    @onchange=SelectedValueChanged
+    id=@_Id
+    aria-describedby=@_Id
+    class=@(IsValid() ? CssClass : "rvt-validation-danger")
+    aria-invalid=@(IsValid() ? "true" : "false")
+>
+    <option value=""></option>
     @foreach(var option in Options ?? new List<T>())
     {
         <option value=@GetId(option)>@GetDisplayName(option)</option>
     }
 </InputSelect>
+<Description Id=@_Id Value=@Description />
+<ValidationMessages Id=@_Id Messages=@_ValidationMessages />
+
 @code
 {
     ///<summary> The options in this select.</summary>
     [Parameter]
     public List<T> Options { get; set; }
     
+    ///<summary> The text used in th HTML Label tag.</summary>
+    [Parameter]
+    public string Label { get; set; }
+    
+    ///<summary> Information text, displayed in a smaller font, beneath the HTML Input element.</summary>
+    [Parameter]
+    public string Description { get; set; }
+
     private string StringValue = "";
-    private string GetDisplayName(T item) => (string)typeof(Entity).GetMethod("GetDisplayName").Invoke(item, null);
-    private string GetId(T item) => (string)typeof(Entity).GetMethod("ToString").Invoke(item, null);
+    private string _Id = "input-" + System.Guid.NewGuid().ToString();
+    private List<string> _ValidationMessages = new List<string>();
+    
+    private string GetDisplayName(T item)
+        => item == null
+        ? null
+        : (string)typeof(Entity).GetMethod("GetDisplayName").Invoke(item, null);
+    
+    private string GetId(T item)
+        => item == null
+        ? null
+        : (string)typeof(Entity).GetMethod("ToString").Invoke(item, null);
 
     private void SelectedValueChanged(ChangeEventArgs evt)
     {
@@ -31,6 +61,13 @@
         if(typeof(T).IsSubclassOf(typeof(MangaQuotes.Data.Entity)) == false) {
             throw new Exception($"{typeof(T).Name} does not inherit from MangaQuotes.Data.Entity.");
         }
+
+        base.EditContext.OnValidationStateChanged += ValidationStateChanged;
+    }
+    
+    public void Dispose()
+    {
+        base.EditContext.OnValidationStateChanged -= ValidationStateChanged;
     }
     
     protected override void OnParametersSet()
@@ -40,18 +77,18 @@
         StringValue = GetId(Value);
     }
 
+    private void ValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+    {
+        _ValidationMessages = this.EditContext.IsModified() ? this.EditContext.GetValidationMessages(this.FieldIdentifier).ToList() : new List<string> ();
+    }
     
+    private bool IsValid()
+    {
+        return _ValidationMessages.Count == 0;
+    }
 
     protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
     {
         throw new System.NotImplementedException();
-        //result = value;
-        //validationErrorMessage = null;
-        //return true;
-        /*Console.WriteLine($"TestSelect - Parsing {value}");
-        result = null;
-        validationErrorMessage = "Work in progress.";
-        return false;*/
     }
 }
-        protected override void
