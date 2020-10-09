@@ -53,6 +53,7 @@
         Console.WriteLine($"TestSelect selected value changed to {evt.Value}");
         Console.WriteLine("TestSelect updating actual value...");
         ValueChanged.InvokeAsync(Options.SingleOrDefault(o => GetId(o) == evt.Value.ToString())).Wait();
+        EditContext.NotifyFieldChanged(FieldIdentifier);
         Console.WriteLine($"Value is now {GetId(Value)}, {GetDisplayName(Value)}");
     }
     protected override void OnInitialized()

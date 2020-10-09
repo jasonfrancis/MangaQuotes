@@ -58,7 +58,7 @@ else
             <h2>Add New Quote</h2>
             <RivetForm @ref=addForm Item="@NewQuote" SubmitButtonText="Add Quote" OnSubmit="AddNewQuote">
                 <div>
-                    <TestSelect @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By"/>
+                    <RivetInputSelectEntity @bind-Value="NewQuote.ParentQuote" @oninput="ParentQuoteChanged" Options=@QuotesList Label="Preceded By"  DisplayLambda=@QuoteOptionText />
                 </div>
 
                 <div>
