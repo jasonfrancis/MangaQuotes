@@ -6,5 +6,10 @@ namespace MangaQuotes.Data
     {
         [Required]
         public string Name { get; set; }
+
+        public override string GetDisplayName()
+        {
+            return Name;
+        }
     }
 }

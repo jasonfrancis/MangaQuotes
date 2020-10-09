@@ -62,7 +62,8 @@ else
                 </div>
 
                 <div>
-                    <RivetInputSelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/>
+                    <TestSelect T=Character @bind-Value=NewQuote.Character Options=@Characters />
+                    @* <RivetInputSelectEntity @bind-Value=NewQuote.Character @oninput=EatShit Options=@Characters Label="Character" DisplayLambda=@(c => $"{c.Name}")/> *@
                     @* <SelectEntity @bind-Value="NewQuote.Character" Options=@Characters Label="Character"/> *@
                     @foreach(var c in Characters)
                     {
@@ -219,6 +220,10 @@ else
         }
     }
 
+    private void EatShit(ChangeEventArgs evt)
+    {
+        Console.WriteLine("Eat shit!");
+    }
     private void SetNewQuoteCharacter(Character character)
     {
         Console.WriteLine($"SetNewQuoteCharacter() {character?.Name ?? "none"}");

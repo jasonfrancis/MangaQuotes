@@ -17,5 +17,11 @@ namespace MangaQuotes.Data
 
         [Required]
         public string Text { get; set; }
+
+        public override string GetDisplayName()
+        {
+            var truncatedQuote = Text.Length > 100 ? $"{Text.Substring(0, 100)}..." : Text;
+            return $"Ch. {Chapter} Pg. {Page} {Character.Name} {truncatedQuote}";
+        }
     }
 }
